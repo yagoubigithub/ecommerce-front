@@ -77,7 +77,7 @@ const AddCategory = () => {
 
 
     const goBack = () => {
-        if(error){
+       
             return  (
 
                 <div className="mt-5">
@@ -88,7 +88,7 @@ const AddCategory = () => {
                     
                 </div>
             )
-        }
+        
     }
     return (
         <Layout
