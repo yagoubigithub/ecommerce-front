@@ -5,6 +5,8 @@ import Layout from './Layout'
 import Card from './Card'
 import {getProducts} from './apiCore'
 
+import Search from './Search'
+
 
 const Home = ()=>{
 
@@ -46,6 +48,9 @@ const Home = ()=>{
      loadProductsBySell()
    }, [])
     return (<Layout title="Home Page" description="Node React e commerce website" className="container-fluid">
+
+
+<Search />
 
 
 <h2 className="mb-2">New Arrivals</h2>
