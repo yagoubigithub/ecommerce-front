@@ -6,13 +6,15 @@ import ShowImage from "./ShowImage";
 
 import moment from "moment";
 
-import { addItem , removeItem, updateItem } from "./cartHelpers";
+import { addItem, removeItem, updateItem } from "./cartHelpers";
 const Card = ({
   product,
   showViewProductButton = true,
   showAddToCartButton = true,
   cartUpdate = false,
-  showRemoveProductButton = false
+  showRemoveProductButton = false,
+  setRun = (f) => f, // default value of function
+  run = undefined, // default value of undefined
 }) => {
   const [redirect, setRedirect] = useState(false);
   const [count, setCount] = useState(product.count);
@@ -62,43 +64,53 @@ const Card = ({
     );
   };
 
-  const handleChange = productId => event =>{
+  const handleChange = (productId) => (event) => {
+    setRun(!run); // run useEffect in parent Cart
     setCount(event.target.value < 1 ? 1 : event.target.value);
 
-    if(event.target.value  >= 1){
-      updateItem(productId, event.target.value )
+    if (event.target.value >= 1) {
+      updateItem(productId, event.target.value);
     }
 
-  }
-  const showCartUpdateOptions = (cartUpdate) =>{
-    return cartUpdate && (
-      <div>
-        
-
-        <div className="input-group mb-3">
-
-        <div className="input-group-prepend">
-
-        <span className="input-group-text">Adjust Quantity</span>
-
+    console.log(productId, event.target.value);
+  };
+  const showCartUpdateOptions = (cartUpdate) => {
+    return (
+      cartUpdate && (
+        <div>
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span className="input-group-text">Adjust Quantity</span>
+            </div>
+            <input
+              type="number"
+              className="form-control"
+              value={count}
+              onChange={handleChange(product._id)}
+            />
+          </div>
         </div>
-       <input type="number" className="form-control" value={count} onChange={handleChange(product._id)} />
-
-        </div>
-      </div>
-    )
-  }
+      )
+    );
+  };
 
   //showRemoveProductButton
 
-
-  const showRemoveButton = (showRemoveProductButton) =>{
-    return showRemoveProductButton && (
-      <button className="btn btn-outline-danger mt-2 mb-2" onClick={()=>removeItem(product._id)}>
-Remove Product
-      </button>
-    )
-  }
+  const showRemoveButton = (showRemoveProductButton) => {
+    return (
+      showRemoveProductButton && (
+        <button
+          className="btn btn-outline-danger mt-2 mb-2"
+          onClick={() => {
+            removeItem(product._id);
+            setRun(!run);
+          }}
+        >
+          Remove Product
+        </button>
+      )
+    );
+  };
   return (
     <div className="card">
       <div className="card-header  name">{product.name}</div>
@@ -123,7 +135,7 @@ Remove Product
 
         {showAddToCart(showAddToCartButton)}
         {showRemoveButton(showRemoveProductButton)}
-        
+
         {showCartUpdateOptions(cartUpdate)}
       </div>
     </div>
