@@ -52,9 +52,35 @@ const Checkout = ({ products }) => {
     }
   };
 
+  const buy = () =>{
+    //
+
+    //send the nonce to your server
+    // nonce = data.instance.requestPaymentMethod()
+
+    let nonce;
+    let getNonce = data.instance.requestPaymentMethod()
+    .then(data=>{
+      console.log(data)
+      nonce = data.nonce
+      // once you nonce (card type, card  number) send nonce as 'paymentMethodNonce' to the backend
+      // and also the total to be charged
+
+      console.log("send nonce and total to process : ", nonce ,getTotal(products))
+    })
+    .catch(error=>{
+      console.log(" droping error",error);
+
+      setData({...data, error : error.message})
+    })
+
+
+
+
+  }
   const showDropIn = () => {
     return (
-      <div>
+      <div onBlur={()=>{setData({...data, error : ''})}}>
         {data.clientToken !== null && products.length > 0 ? (
           <div>
             <DropIn
@@ -64,15 +90,22 @@ const Checkout = ({ products }) => {
               onInstance={(instance) => (data.instance = instance)}
             />
 
-            <button className="btn btn-success">Checkout</button>
+            <button onClick={buy} className="btn btn-success">Pay</button>
           </div>
         ) : <div>hesedff</div>}
       </div>
     );
   };
+
+  const showError = error =>(
+    <div className="alert alert-danger" style={{display : error ?  "" : "none"}}>
+{error}
+    </div>
+  )
   return (
     <div>
       <h2>Total : ${getTotal()} </h2>
+      {showError(data.error)}
       {showCheckout()}
     </div>
   );
