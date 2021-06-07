@@ -6,11 +6,13 @@ import Card from "./Card";
 import DropIn from "braintree-web-drop-in-react";
 import { getBraintreeClientToken, processPayment } from "./apiCore";
 
+import {emptyCart} from "./cartHelpers"
 import { isAuthenticated } from "../auth";
 import { Link } from "react-router-dom";
 
 const Checkout = ({ products }) => {
   const [data, setData] = useState({
+    loading  :false,
     success: false,
     clientToken: null,
     error: "",
@@ -53,6 +55,7 @@ const Checkout = ({ products }) => {
   };
 
   const buy = () => {
+    setData({ loading: true });
     //
 
     //send the nonce to your server
@@ -77,13 +80,20 @@ const Checkout = ({ products }) => {
           .then((responce) => {
             setData({ ...data, success: responce.success });
 
+
             //empty cart
+
+            emptyCart(()=>{
+              console.log("payment success and empty catrt")
+              setData({ loading: false });
+            })
 
             //create order
           })
 
           .catch((error) => {
             console.log(error);
+            setData({ loading: false });
           });
       })
       .catch((error) => {
@@ -104,6 +114,9 @@ const Checkout = ({ products }) => {
             <DropIn
               options={{
                 authorization: data.clientToken,
+                paypal : {
+                  flow : "vault"
+                }
               }}
               onInstance={(instance) => (data.instance = instance)}
             />
@@ -113,7 +126,7 @@ const Checkout = ({ products }) => {
             </button>
           </div>
         ) : (
-          <div>hesedff</div>
+          <div></div>
         )}
       </div>
     );
@@ -136,9 +149,12 @@ const Checkout = ({ products }) => {
       Thanks, your payment was successful!
     </div>
   );
+
+  const showLoading = (loading) => loading && <h2>loading ...</h2>
   return (
     <div>
       <h2>Total : ${getTotal()} </h2>
+      {showLoading(data.loading)}
       {showError(data.error)}
       {showSuccess(data.success)}
       {showCheckout()}
