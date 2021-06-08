@@ -4,7 +4,7 @@ import Layout from "./Layout";
 import Card from "./Card";
 
 import DropIn from "braintree-web-drop-in-react";
-import { getBraintreeClientToken, processPayment } from "./apiCore";
+import { getBraintreeClientToken, processPayment , createOrder } from "./apiCore";
 
 import {emptyCart} from "./cartHelpers"
 import { isAuthenticated } from "../auth";
@@ -35,6 +35,11 @@ const Checkout = ({ products }) => {
   useEffect(() => {
     getToken(userId, token);
   }, []);
+
+  const handleAddress = event =>{
+
+    setData({...data, address : event.target.value})
+  }
 
   const getTotal = () => {
     return products.reduce((currentValue, nextValue) => {
@@ -78,17 +83,26 @@ const Checkout = ({ products }) => {
 
         processPayment(userId, token, paymentData)
           .then((responce) => {
-            setData({ ...data, success: responce.success });
+            
 
 
             //empty cart
+            //create order
+            const createOrderData = {
+              products,
+              transaction_id :  responce.transaction.id,
+              amount :  responce.transaction.amount,
+              address : data.address
+            }
 
+            createOrder(userId, token,createOrderData)
+            setData({ ...data, success: responce.success });
             emptyCart(()=>{
               console.log("payment success and empty catrt")
               setData({ loading: false });
             })
 
-            //create order
+            
           })
 
           .catch((error) => {
@@ -111,6 +125,17 @@ const Checkout = ({ products }) => {
       >
         {data.clientToken !== null && products.length > 0 ? (
           <div>
+
+          <div>
+          <label className="text-muted">Delivery  Address  :  </label>
+          <textarea
+          onChange={handleAddress}
+          className="form-control"
+          value={data.address}
+          placeholder="Type your delivery address here"
+           />
+          </div>
+
             <DropIn
               options={{
                 authorization: data.clientToken,
