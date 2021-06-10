@@ -10,7 +10,7 @@ import {emptyCart} from "./cartHelpers"
 import { isAuthenticated } from "../auth";
 import { Link } from "react-router-dom";
 
-const Checkout = ({ products }) => {
+const Checkout = ({ products, setRun = f => f, run = undefined }) => {
   const [data, setData] = useState({
     loading  :false,
     success: false,
@@ -95,12 +95,19 @@ const Checkout = ({ products }) => {
               address : data.address
             }
 
-            createOrder(userId, token,createOrderData)
-            setData({ ...data, success: responce.success });
-            emptyCart(()=>{
-              console.log("payment success and empty catrt")
-              setData({ loading: false });
+            createOrder(userId, token,createOrderData).then((response)=>{
+
+              emptyCart(() => {
+                setRun(!run); // run useEffect in parent Cart
+                console.log('payment success and empty cart');
+                setData({
+                    loading: false,
+                    success: true
+                });
+            });
             })
+          
+           
 
             
           })
