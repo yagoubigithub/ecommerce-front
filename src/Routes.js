@@ -19,7 +19,7 @@ import Shop from './core/Shop'
 import Product from './core/Product'
 import Cart from './core/Cart';
 import Orders from './admin/Orders';
-
+import Profile from './user/Profile';
 const Routes = () =>{
     return (
         <BrowserRouter>
@@ -39,6 +39,7 @@ const Routes = () =>{
                 <Route path="/cart" exact component={Cart} />
 
                 <AdminRoute path="/admin/orders" component={Orders} />
+                <PrivateRoute path="/profile/:userId" component={Profile} />
             </Switch>
         </BrowserRouter>
     )
