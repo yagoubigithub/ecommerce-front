@@ -22,6 +22,7 @@ import Orders from './admin/Orders';
 import Profile from './user/Profile';
 
 import ManageProducts from './admin/ManageProducts';
+import UpdateProduct from './admin/UpdateProduct'
 const Routes = () =>{
     return (
         <BrowserRouter>
@@ -43,6 +44,7 @@ const Routes = () =>{
                 <AdminRoute path="/admin/orders" component={Orders} />
                 <PrivateRoute path="/profile/:userId" component={Profile} />
                 <AdminRoute path="/admin/products" component={ManageProducts} />
+                <AdminRoute path="/admin/product/update/:productId" component={UpdateProduct} />
             </Switch>
         </BrowserRouter>
     )
