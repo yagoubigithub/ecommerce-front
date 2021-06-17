@@ -123,6 +123,8 @@ const UpdateProduct = ({ match }) => {
             price: "",
             quantity: "",
             loading: false,
+            error : false,
+            redirecteToProfile : true,
             createdProduct: data.name,
           });
         }
